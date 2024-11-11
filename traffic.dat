@@ -1,0 +1,11 @@
+Priority    Sign       Lane       Seconds
+Priority 0: straight   main       50 seconds
+Priority 1: straight   diversion  30 seconds
+Priority 2: left       main       25 seconds
+Priority 3: left       diversion  20 seconds
+Priority 4: right      main       25 seconds
+Priority 5: right      diversion  20 seconds
+Priority 6: pedestrian main       15 seconds
+Priority 7: pedestrian diversion  20 seconds
+
+Time to take from 'straight main' to 'pedestrian main' is: 170
