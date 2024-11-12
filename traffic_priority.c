@@ -1,6 +1,8 @@
 #include "traffic_priority.h"
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+
 
 void initPQ(PriorityQueue* pq){
     pq->count = 0;
@@ -91,7 +93,12 @@ int getTime(PriorityQueue pq, char* start_sign, char* start_lane, char* end_sign
     return sum;
 }
 
-void printTraffic(PriorityQueue pq, char* start_sign, char* start_lane, char* end_sign, char* end_lane){
+void activityOne(PriorityQueue pq, char* start_sign, char* start_lane, char* end_sign, char* end_lane){
+
+    // printf("\nFirst: %s %s", start_sign, start_lane);
+    // printf("\nLast: %s %s", end_sign, end_lane);
+
+
     FILE *pf = fopen("traffic.dat", "w");
 
     if(pf == NULL){
@@ -104,24 +111,51 @@ void printTraffic(PriorityQueue pq, char* start_sign, char* start_lane, char* en
         fprintf(pf, "Priority %d: %-10s %-10s %d seconds\n", i, pq.arr[i].activity.sign, pq.arr[i].activity.lane, pq.arr[i].seconds);
     }
 
-    int startInd, sum = 0;
-    for(int i = 0; i < pq.count; i++){
-        if(strcmp(start_sign, pq.arr[i].activity.sign) == 0 && strcmp(start_lane, pq.arr[i].activity.lane) == 0){
-            startInd = i;
-            break;
-        }
-    }
-    int count = 1;
-    for(int i = startInd; count < pq.count; i = (i+1)%pq.count){
-        if(strcmp(end_sign, pq.arr[i].activity.sign) == 0 && strcmp(end_lane, pq.arr[i].activity.lane) == 0){
-            break;
-        }
-        sum += pq.arr[i].seconds;
-        // printf("\n%d", i);
-        count++;
-    }
+    int time = getTime(pq, start_sign, start_lane, end_sign, end_lane);
 
-    fprintf(pf, "\nTime to take from 'straight main' to 'pedestrian main' is: %d", sum);
+    fprintf(pf, "\nTime to take from %s %s to %s %s is: %d", start_sign, start_lane, end_sign, end_lane, time);
 
     fclose(pf);
+}
+
+void activityTwo(PriorityQueue pq){
+    char choice[4] = "";
+    FILE *pf = fopen("traffic_result.dat", "a");
+
+    if(pf == NULL){
+        perror("\nFile not created");
+        return;
+    }
+
+    fprintf(pf, "Priority    Sign       Lane       Seconds\n");
+    for(int i = 0; i < pq.count; i++){
+        fprintf(pf, "Priority %d: %-10s %-10s %d seconds\n", i, pq.arr[i].activity.sign, pq.arr[i].activity.lane, pq.arr[i].seconds);
+    }
+    while(1){
+            char first_sign[50], first_lane[50], last_sign[50], last_lane[50];
+            printf("\nEnter first sign: ");
+            scanf(" %s", first_sign);
+            printf("Enter first lane: ");
+            scanf(" %s", first_lane);
+            printf("Enter last sign: ");
+            scanf(" %s", last_sign);
+            printf("Enter last lane: ");
+            scanf(" %s", last_lane);
+
+            int time = getTime(pq, first_sign, first_lane, last_sign, last_lane);
+
+            fprintf(pf, "\nTime to take from %s %s to %s %s is: %d", first_sign, first_lane, last_sign, last_lane, time);
+
+            printf("Continue? (yes/no): ");
+            scanf(" %s", choice);
+
+            for(int i = 0; i < strlen(choice) && choice[i] != '\n' && choice[i] != '\0' && isalpha(choice[i]) && isupper(choice[i]); i++){
+                choice[i] += 32;
+            }
+
+            if(strcmp(choice, "no") == 0){
+                fclose(pf);
+                return;
+            }
+    }
 }

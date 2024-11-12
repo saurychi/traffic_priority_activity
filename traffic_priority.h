@@ -26,6 +26,7 @@ void buildmaxHeap(PriorityQueue* pq);
 void maxHeapSort(PriorityQueue* pq);
 void displayPQ(PriorityQueue pq);
 int getTime(PriorityQueue pq, char* start_sign, char* start_lane, char* end_sign, char* end_lane);
-void printTraffic(PriorityQueue pq, char* start_sign, char* start_lane, char* end_sign, char* end_lane);
+void activityOne(PriorityQueue pq, char* start_sign, char* start_lane, char* end_sign, char* end_lane);
+void activityTwo(PriorityQueue pq);
 
 #endif
